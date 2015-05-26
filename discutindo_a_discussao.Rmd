@@ -22,7 +22,9 @@ knitr::opts_chunk$set(echo=FALSE, fig.width=8, fig.height=6, fig.path='./figs/')
 Este documento detalha as análises das fichas de avaliação de teses e dissertações do IB-USP,
 usadas em nossa palestra no workshop [Pensamento crítico do pós-graduando](http://www.ib.usp.br/images/workshop05.png).
 
-Códigos das análises e os dados usados estão disponíveis no repositório GitHub.
+Códigos das análises e os dados usados estão disponíveis no
+repositório GitHub que abriga esta página ((https://github.com/CPG-IBUSP/discutindo-a-discussao).
+Correções, sugestões novas análises a acrescentar são muito bem vindas.
 
 ### A questão
 
@@ -41,12 +43,12 @@ análises bem descritas e adequadas,
 resultados bem apresentados e conclusivos, discussão lógica e bem fundamentada, uso adequado da literatura.
 Fonte: [Avaliação de teses e dissertações do IB, CPG ](http://cpg-ibusp.github.io/avaliacao-teses/)
 
-As seções seguinte usam os outros dados levantados pela ficha de avaliação para testar algumas explicações
+As seções seguintes usam os outros dados levantados pela ficha de avaliação para testar algumas hipóteses
 para este padrão.
 
 
 
-## A qualidade da discussão depende do curso, título, tempo ou avaliação nos outros itens ?
+## A qualidade da discussão depende do curso, título, tempo ou avaliação dos outros itens ?
 
 A probabilidade da discussão ser considerada excelente foi afetada inequivocamente apenas
 pela avaliação dos demais itens da tese. 
@@ -67,17 +69,17 @@ teses e dissertações.
 
 ### Métodos
 
-Ajuste de modelos binomiais com efeitos mistos (glmms) em que variável resposta foi
+Ajustamos  modelos binomiais com efeitos mistos (glmms) em que variável resposta foi
 a indicação ou não de excelência da discussão por cada avaliador. 
-Foram ajustados modelos todas as combinações aditivas dos seguintes efeitos fixos, disponíveis na ficha:
+Foram ajustados modelos com todas as combinações aditivas dos seguintes efeitos fixos, disponíveis na ficha:
 
 * `titulo`: fator com dois níveis (mestrado ou doutorado)
 * `programa`: fator com cinco níveis (Botânica, Ecologia, Fisiologia, Genética, Zoologia)
 * `atrasou` : fator com dois níveis (depósito ocorreu em até 10% a mais que o prazo máximo, ou depósito com atraso superior a 10% do prazo máximo)
 * `nota8` : numérico (soma de indicações de excelência nos demais itens, exceto originalidade)
 
-Em todos os modelos os alunos foram tratados como efeito aleatórios. Isso significa que o modelo leva em conta
-a variação entre avaliações de uma mesma tese ou dissertação.
+Em todos os modelos cada tese foi tratada como efeito aleatório.
+Isso significa que o modelo leva em conta a associação entre avaliações de uma mesma tese ou dissertação.
 
 A seleção de modelos com $\Delta\textrm{AIC}$ corrigido para pequenas amostras indicou 3 modelos plausíveis:
 
@@ -85,7 +87,7 @@ A seleção de modelos com $\Delta\textrm{AIC}$ corrigido para pequenas amostras
 AICctab(f.list, weights=TRUE)
 ```
 Uma inspeção dos coeficientes mostrou que os efeitos do tempo de depósito e do título
-eram fracos com erros-padrão muito altos. Ainda assim, foram calculados os previstos
+eram fracos e com erros-padrão muito altos. Ainda assim, foram calculados os previstos
 pela ponderação dos três modelos (model averaging). A barra de erro na [Fig.2](#Fig2)
 é o intervalo de confiança destas previsões.
 A inspeção gráfica confirmou que o único
@@ -93,8 +95,9 @@ efeito relevante foi o da nota obtida nos demais quesitos.
 
 ## Orientadores avaliam a qualidade da discussão diferente do resto da banca ?
 
-A avaliação que os orientadores fizeram da discussão dependeu da
-avaliação que fizeram dos outros itens ([Fig.3](#Fig3)).
+A avaliação que os orientadores fizeram da discussão foi diferente da feita pelo
+resto da banca. Mas a direção desta diferença dependeu da
+avaliação que o orientador fez dos outros itens ([Fig.3](#Fig3)).
 
 ```{r efeito-orientador}
 or.f1 + geom_point(size=5, aes(colour=orientador)) +
@@ -123,14 +126,14 @@ menor do que os dos demais avaliadores.
 
 ### Métodos
 
-A partir de 2013 os orientadores forma solicitados a preencher a ficha de avaliação.
-Para esta análise usamos as `r nrow(com.orient)` fichas de `r length(unique(com.orient$aluno))` alunos
+A partir de 2013 os orientadores foram solicitados a também preencher a ficha de avaliação.
+Para esta análise usamos as `r nrow(com.orient)` fichas de `r length(unique(com.orient$aluno))` teses e dissertações
 que tiveram esta avaliação dos orientadores, e de outros membros da banca.
 
 Usamos modelos binomiais com efeitos mistos (glmms) para verificar se a probabilidade
 da discussão ser considerada excelente difere entre orientador e os demais membros da banca.
-Em todos os modelos os alunos foram incluídos como efeito aleatórios, para
-considerar a variação entre avaliações a um mesmo trabalho, entre avaliadores.
+Em todos os modelos as teses/dissertações foram incluídass como efeito aleatórios, para
+considerar a relação entre avaliações de um mesmo trabalho.
 As variáveis usadas como efeitos fixos foram:
 
 * `titulo`: fator com dois níveis (mestrado ou doutorado)
@@ -139,7 +142,7 @@ As variáveis usadas como efeitos fixos foram:
 
 Em todos os modelos mantivemos o efeito da avaliação dos outros itens, que na
 análise anterior mostrou forte influência sobre a avaliação da discussão.
-Esta variável foi simplificada em fator com duas classes (ver abaixo), devido
+Esta variável foi simplificada em fator com duas classes, devido
 ao menor número de fichas para esta análise.
 Para avaliar se o rigor de avaliação do orientador mudava entre mestrados e doutorados,
 também incluímos esta covariável como candidata, com efeito aditivo e em interação com
@@ -161,7 +164,7 @@ dos previstos pelo modelo mais plausível, levando em conta as fontes de variaç
 
 No entender dos avaliadores, uma boa discussão aumenta muito o impacto potencial dos
 artigos que podem resultar da tese ou dissertação.
-Este relação é exacerbada por bons resultados.
+Essa relação é exacerbada por bons resultados [Fig.4](#Fig4).
 
 Para os trabalhos que receberam mais de 4 indicações de excelência nos outros itens,
 a probabilidade de indicação de impacto alto é
@@ -215,3 +218,18 @@ AICctab(imp.list, weights=TRUE)
 ```
 As barras na [Fig.4](#Fig4) são os intervalos de confiança calculados por simulações bootstrap
 dos previstos pelo modelo mais plausível, levando em conta as fontes de variação dos efeitos fixos e aleatórios.
+
+## Agradecimentos
+
+* A todos participantes das `r length(unique(ficha$aluno))` bancas de defesa que ocorreram
+no IB desde 2011, pelo tempo e atenção concedidos à avaliação de nossas teses e dissertações.
+* À toda equipe da seção de Pós-Graduação do IB, cujo compromisso institucional
+tornou possível esta avaliação. A aplicação, organização
+e transcrição dos dados de centenas de fichas por ano não seria possível sem isso.
+* A todos os professores, estudantes e funcionários do IB pelas contribuições nas
+ocasiões em que apresentamos estes resultados para debate.
+* Ao Carlos Navas, pelo convite para participar do Simpósio "Pensamento Crítico na Pós-Graduação".
+* A todos de nosso co-laboratório LAGE, por tantas discussões intensas e produtivas sobre
+ciência, pós-graduação, a vida, o universo e tudo mais.
+* À FAPESP pelo continuado apoio à nossa pesquisa e ao CNPq pelas bolsas de produtividade
+tem nos concedido.
