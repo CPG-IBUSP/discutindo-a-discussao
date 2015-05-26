@@ -1,0 +1,159 @@
+---
+title: "Discutindo a discussão: Análise das fichas de avaliação"
+author: "Glauco Machado e Paulo Inácio Prado"
+output:
+  html_document:
+    toc: true
+    theme: united
+  pdf_document:
+    toc: true
+    highlight: zenburn
+---
+
+
+```{r settings, echo=FALSE}
+library(xtable)
+knitr::opts_chunk$set(echo=FALSE, fig.width=8, fig.height=6, fig.path='./figs/')
+```
+
+## Contexto
+Este documento detalha as análises das fichas de avaliação de teses e dissertações do IB-USP,
+usadas em nossa palestra no workshop [Pensamento crítico do pós-graduando](http://www.ib.usp.br/images/workshop05.png).
+
+Códigos das análises e os dados usados estão disponíveis no repositório GitHub.
+
+### A questão
+
+Pouco mais da metade das teses e dissertações defendidas no IB-USP entre 2011 e 2014
+tiveram sua discussão indicada como excelente ou muito boa
+pelos membros das bancas de defesa.
+Isso torna a discussão o pior entre os dez itens avaliados ([Fig.1](#Fig1)).
+
+![](https://raw.githubusercontent.com/CPG-IBUSP/avaliacao-teses/gh-pages/geral/assets/fig/DotplotMD-1.png)
+
+<a name="Fig1"></a> Figura 1 - **Proporção de teses e dissertações consideradas excelentes em dez quesitos pelos membros das banca de defesa.** Avaliação anônima feita pelos participantes das bancas de defesa, 
+que indicaram até dez aspectos em que a tese/dissertação foi excelente ou muito boa: 
+redação, contextualização teórica, objetivos bem definidos, pergunta/hipóteses claras, 
+originalidade e relevância, métodos bem descritos e adequados, 
+análises bem descritas e adequadas, 
+resultados bem apresentados e conclusivos, discussão lógica e bem fundamentada, uso adequado da literatura.
+Fonte: [Avaliação de teses e dissertações do IB, CPG ](http://cpg-ibusp.github.io/avaliacao-teses/)
+
+As seções seguinte usam os outros dados levantados pela ficha de avaliação para testar algumas explicações
+para este padrão.
+
+
+
+## A qualidade da discussão depende do curso, título, tempo ou avaliação nos outros itens
+
+A probabilidade da discussão ser considerada excelente foi afetada inequivocamente apenas
+pela avaliação dos demais itens da tese. 
+
+```{r efeito-covars}
+print(covar.f1 + geom_linerange(col="darkblue") + t1)
+```
+
+<a name="Fig2"></a> Figura 2 - **Proporção de teses e dissertações
+consideradas excelentes na discussão em função de sua avaliação nos demais quesitos.**
+O eixo x é o número de indicações nos demais quesitos avaliados com a ficha.
+O eixo y é a proporção de teses e dissertações que tiveram a discussão indicada como
+excelente (pontos) e os intervalos de confiança (barras) do previsto pela ponderação de modelos selecionados
+(veja em métodos, a seguir). Tamanho da amostra: `r nrow(ficha)` avaliações de `r length(unique(ficha$aluno))`
+teses e dissertações.
+
+
+
+### Métodos
+
+Ajuste de modelos binomiais com efeitos mistos (glmms) em que variável resposta foi
+a indicação ou não de excelência da discussão por cada avaliador. 
+Foram ajustados modelos todas as combinações aditivas dos seguintes efeitos fixos, disponíveis na ficha:
+
+* `titulo`: fator com dois níveis (mestrado ou doutorado)
+* `programa`: fator com cinco níveis (Botânica, Ecologia, Fisiologia, Genética, Zoologia)
+* `atrasou` : fator com dois níveis (depósito ocorreu em até 10% a mais que o prazo máximo, ou depósito com atraso superior a 10% do prazo máximo)
+* `nota8` : numérico (soma de insicaçõe de excelência nos demais itens, exceto originalidade)
+
+Em todos os modelos os alunos foram tratados como efeito aleatórios. Isso siginifica que o modelo leva em conta
+a variação entre avaliações de uma mesma tese ou dissertação.
+
+A seleção de modelos com $\Delta\textrm{AIC}$ corrigicdo para pequenas amostras indicou 3 modelos plausíveis:
+
+```{r selecao covars}
+AICctab(f.list, weights=TRUE)
+```
+Uma inspeção dos coeficientes mostrou que os efeitos do tempo de depósito e do título
+eram fracos com erros-padrão muito altos. Ainda assim, foram calculados os previstos
+pela ponderação dos três modelos (model averaging). A barra de erro na [Fig.2](#Fig2)
+é o intervalo de confiança destas previsões.
+A inspeção gráfica confirmou que o único
+efeito relevante foi o da nota obtida nos demais quesitos. 
+
+## Orientadores avaliam a qualidade da discussão diferente do resto da banca
+
+A avaliação que os orientadores fizeram da discussão dependeu da
+avaliação que fizeram dos outros itens ([Fig.3](#Fig3)).
+
+```{r efeito-orientador}
+or.f1 + geom_point(size=5, aes(colour=orientador)) +
+    geom_line(aes(group=orientador, colour=orientador)) +
+        geom_linerange(aes(colour=orientador)) +
+            scale_colour_discrete(name="", breaks=c("TRUE","FALSE"), labels=c("Orientador", "Outros")) +
+                t1 + theme(legend.position=c(0.9,0.9))
+```
+
+<a name="Fig3"></a> Figura 3 - **Proporção de teses e dissertações
+consideradas excelentes na discussão pelos orientadores e pelos outros avaliadores, em função de sua avaliação nos demais quesitos.**
+O eixo x é o número de indicações nos demais quesitos avaliados com a ficha, exceto originalidade.
+O eixo y é a proporção de teses e dissertações que tiveram a discussão indicada como
+excelente (pontos) e os intervalos de confiança (barras) do previsto pelo modelo selecionado
+(veja em métodos, a seguir). Tamanho da amostra: `r nrow(com.orient)` avaliações de `r length(unique(com.orient$aluno))`
+teses e dissertações.
+
+
+Quando o orientador indica excelência nos demais itens,
+a chance de que indique excelência para a discussão é
+`r round(100*with(or.pred,p[nota.m4==TRUE&orientador==TRUE])/with(or.pred,p[nota.m4==TRUE&orientador==FALSE])-100,0)` %
+maior que os demais avaliadores.
+Já quando o orientador indicou poucos dos demais quesitos, a chance de que indique que a discussão é excelente
+é `r round(100- 100*with(or.pred,p[nota.m4==FALSE&orientador==TRUE])/with(or.pred,p[nota.m4==FALSE&orientador==FALSE]),0)`%
+menor do que os dos demais avaliadores.
+
+### Métodos
+
+A partir de 2013 os orientadores forma solicitados a preencher a ficha de avaliação.
+Para esta análise usamos as `r nrow(com.orient)` fichas de `r length(unique(com.orient$aluno))` alunos
+que tiveram esta avaliação dos orientadores, e de outros membros da banca.
+
+Usamos modelos binomiais com efeitos mistos (glmms) para verificar se a probabilidade
+da discussão ser considerada excelente difere entre orientador e os demais membros da banca.
+Em todos os modelos os alunos foram incluídos como efeito aleatórios, para
+considerar a variação entre avaliações a um mesmo trabalho, entre avaliadores.
+As variáveis usadas como efeitos fixos foram:
+
+* `titulo`: fator com dois níveis (mestrado ou doutorado)
+* `orientador`: fator com dois níveis (o avaliador é o orientador; ou o avalaidor não é o orientador)
+* `nota.m4` : fator com dois níveis (até 4 indicações de excelência nos demais itens exceto originalidade; mais de 4 indicações)
+
+Em todos os modelos mantivemos o efeito da avaliação dos outros itens, que na
+análise anterior mostrou forte influência sobre a avaliação da discussão.
+Esta variável foi simplificada em fator com duas classes (ver abaixo), devido
+ao menor número de fichas para esta análise.
+Para avaliar se o rigor de avaliação do orientador mudava entre mestrados e doutorados,
+também incluímos esta covariável como candidata, com efeito aditivo e em interação com
+o avaliador. Por fim, a exploração dos dados sugeriu que poderia haver uma interação
+entre o tipo de avaliador (orientador ou não) e a avaliação nos outros quesitos.
+Por isso também ajustamos um modelo com esta interação.
+
+
+O modelo com a interação entre orientador e avaliação dos outros quesitos
+foi muito mais plausível que os demais.
+
+```{r selecao orientador}
+AICctab(or.list, weights=TRUE)
+```
+As barras na [Fig.3](#Fig3) são os intervalos de confiança calculados por simulações bootstrap
+dos previstos pelo modelo mais plauśivel, levando em conta as fontes de variação dos efeitos fixos e aleatórios.
+
+## A qualidade da discussão afeta o impacto potencial do trabalho
+
