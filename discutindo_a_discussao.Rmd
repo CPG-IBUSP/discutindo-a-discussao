@@ -157,3 +157,31 @@ dos previstos pelo modelo mais plauśivel, levando em conta as fontes de variaç
 
 ## A qualidade da discussão afeta o impacto potencial do trabalho
 
+No entender dos avaliadores, uma boa discussão aumenta muito o impacto potencial dos
+artigos que podem resultar da tese ou dissertação.
+Este relação é exarcebada por bons resultados.
+
+Para os trabalhos que receberam mais de 4 indicações de excelência nos outros itens,
+a probabilidade de indicação de impacto alto é
+%
+maior quando o avaliador considerou a discussão excelente.
+Esta diferença sobe para
+% quando os resultados e a discussão foram considerados excelentes.
+Também chama a atenção que menos de % dos trabalhos sem indicação de excelência
+para discussão e resultados tiveram indicação de alto impacto potencial,
+independente da indicação nos outros quesitos.
+
+```{r impacto}
+imp.f1 + geom_point(aes(colour=rd),size=5) + geom_line(aes(colour=rd, group=rd)) +
+    geom_linerange(data=subset(imp.summ,rd %in% c("TRUE TRUE","FALSE FALSE")),aes(colour=rd)) +
+        theme(legend.position=c(0.95,0.89))
+```
+
+<a name="Fig4"></a> Figura 4 - **Proporção de teses e dissertações
+consideradas de alto impacto potenacial, em função de sua avaliação nos demais quesitos.**
+As linhas são os subconjuntos de fichas com indicação de excelência em discussão, resultados, ambos ou nenhum.
+O eixo x é o número de indicações nos demais quesitos avaliados com a ficha, incluindo originalidade.
+O eixo y é a proporção de teses e dissertações que tiveram indicação de impacto potencial
+alto (pontos) e os intervalos de confiança (barras) do previsto pelo modelo selecionado
+(veja em métodos, a seguir). Tamanho da amostra: `r nrow(impacto)` avaliações de `r length(unique(impacto$aluno))`
+teses e dissertações.
