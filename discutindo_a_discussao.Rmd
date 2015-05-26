@@ -1,7 +1,7 @@
 ---
 title: "Discutindo a discussão: Análise das fichas de avaliação"
 author: "Glauco Machado e Paulo Inácio Prado"
-institution: "Instituto de Biociências - USP"
+subtitle: "Pós-graduação do Instituto de Biociências - USP"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 output:
   html_document:
@@ -23,8 +23,8 @@ Este documento detalha as análises das fichas de avaliação de teses e dissert
 usadas em nossa palestra no workshop [Pensamento crítico do pós-graduando](http://www.ib.usp.br/images/workshop05.png).
 
 Códigos das análises e os dados usados estão disponíveis no
-repositório GitHub que abriga esta página ((https://github.com/CPG-IBUSP/discutindo-a-discussao).
-Correções, sugestões novas análises a acrescentar são muito bem vindas.
+repositório GitHub que abriga esta página (https://github.com/CPG-IBUSP/discutindo-a-discussao).
+Correções, críticas e sugestões novas análises a acrescentar são muito bem vindas.
 
 ### A questão
 
@@ -35,7 +35,7 @@ Isso torna a discussão o pior entre os dez itens avaliados ([Fig.1](#Fig1)).
 
 ![](https://raw.githubusercontent.com/CPG-IBUSP/avaliacao-teses/gh-pages/geral/assets/fig/DotplotMD-1.png)
 
-<a name="Fig1"></a> ** Figura 1 - Proporção de teses e dissertações consideradas excelentes em dez quesitos pelos membros das banca de defesa.** Avaliação anônima feita pelos participantes das bancas de defesa, 
+<a name="Fig1"></a> **Figura 1 - Proporção de teses e dissertações consideradas excelentes em dez quesitos pelos membros das banca de defesa.** Avaliação anônima feita pelos participantes das bancas de defesa, 
 que indicaram até dez aspectos em que a tese/dissertação foi excelente ou muito boa: 
 redação, contextualização teórica, objetivos bem definidos, pergunta/hipóteses claras, 
 originalidade e relevância, métodos bem descritos e adequados, 
@@ -107,7 +107,7 @@ or.f1 + geom_point(size=5, aes(colour=orientador)) +
                 t1 + theme(legend.position=c(0.9,0.9))
 ```
 
-<a name="Fig3"></a> ** Figura 3 - Proporção de teses e dissertações
+<a name="Fig3"></a> **Figura 3 - Proporção de teses e dissertações
 consideradas excelentes na discussão pelos orientadores e pelos outros avaliadores, em função de sua avaliação nos demais quesitos.**
 O eixo x é o número de indicações nos demais quesitos avaliados com a ficha, exceto originalidade.
 O eixo y é a proporção de teses e dissertações que tiveram a discussão indicada como
@@ -231,5 +231,4 @@ ocasiões em que apresentamos estes resultados para debate.
 * Ao Carlos Navas, pelo convite para participar do Simpósio "Pensamento Crítico na Pós-Graduação".
 * A todos de nosso co-laboratório LAGE, por tantas discussões intensas e produtivas sobre
 ciência, pós-graduação, a vida, o universo e tudo mais.
-* À FAPESP pelo continuado apoio à nossa pesquisa e ao CNPq pelas bolsas de produtividade
-tem nos concedido.
+* À FAPESP pelo continuado apoio à nossa pesquisa e ao CNPq pelas nossas bolsas de produtividade.
