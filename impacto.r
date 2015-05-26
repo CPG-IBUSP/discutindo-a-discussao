@@ -16,15 +16,23 @@ imp.m5b <- glmer(impacto.alto ~ discussao + resultados + nota.outros + discussao
                  data=impacto, family=binomial)
 imp.m6 <- glmer(impacto.alto ~ resultados + analises + nota.outros + (1|aluno), data=impacto, family=binomial)
 imp.m7 <- glmer(impacto.alto ~ resultados + analises + discussao + nota.outros + (1|aluno), data=impacto, family=binomial)
-AICctab(imp.m0, imp.m1, imp.m2, imp.m3, imp.m4, imp.m5, imp.m5b,imp.m6, imp.m7)
+AICctab(imp.m0, imp.m1, imp.m2, imp.m3, imp.m4, imp.m5,imp.m6, imp.m7)
 
+## Lista dos modelos
+imp.list <- list(imp.m0, imp.m1, imp.m2, imp.m3, imp.m4, imp.m5)
+names(imp.list) <- sapply(imp.list, function(x) as.character(formula(x))[3])
+names(imp.list) <- sub(" . .1 . aluno.", "", names(imp.list))
+names(imp.list) <- paste("~",names(imp.list))
+names(imp.list)[1] <- "~ 1"
+AICctab(imp.list, weights=TRUE)
 
 ## Calculo das poporcoes e ICs aproximados
+impacto$pred <- predict(imp.m5)
 imp.summ <- impacto %>%
     mutate(nota.sd.m4=nota.outros>4, rd=paste(resultados,discussao)) %>%
         group_by(rd, nota.sd.m4) %>%
-            summarize(media=mean(impacto.alto), N=n()) %>%
-                mutate(prop=media, prop.low = p.ci(prop, N)[1,], prop.up=p.ci(prop, N)[2,])
+            summarize(media=mean(impacto.alto), pred=mean(pred), N=n()) %>%
+                mutate(prop=media, prop.pred=logist(pred), prop.low = p.ci(prop, N)[1,], prop.up=p.ci(prop, N)[2,])
 ## Estimativas bootstrap dos previstos
 myPred2 <- function(.){
     m1 <- model.frame(.)
