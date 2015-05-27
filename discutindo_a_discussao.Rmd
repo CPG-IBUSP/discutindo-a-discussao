@@ -61,7 +61,7 @@ print(covar.f1 + geom_linerange(col="darkblue") + t1)
 consideradas excelentes na discussão em função de sua avaliação nos demais quesitos.**
 O eixo x é o número de indicações nos demais quesitos avaliados com a ficha.
 O eixo y é a proporção de teses e dissertações que tiveram a discussão indicada como
-excelente (pontos) e os intervalos de confiança (barras) do previsto pela ponderação de modelos selecionados
+excelente (pontos) e os intervalos de confiança 95% (barras) do previsto pela ponderação de modelos selecionados
 (veja em métodos, a seguir). Tamanho da amostra: `r nrow(ficha)` avaliações de `r length(unique(ficha$aluno))`
 teses e dissertações.
 
@@ -111,7 +111,7 @@ or.f1 + geom_point(size=5, aes(colour=orientador)) +
 consideradas excelentes na discussão pelos orientadores e pelos outros avaliadores, em função de sua avaliação nos demais quesitos.**
 O eixo x é o número de indicações nos demais quesitos avaliados com a ficha, exceto originalidade.
 O eixo y é a proporção de teses e dissertações que tiveram a discussão indicada como
-excelente (pontos) e os intervalos de confiança (barras) do previsto pelo modelo selecionado
+excelente (pontos) e os intervalos de confiança 95% (barras) do previsto pelo modelo selecionado
 (veja em métodos, a seguir). Tamanho da amostra: `r nrow(com.orient)` avaliações de `r length(unique(com.orient$aluno))`
 teses e dissertações.
 
@@ -157,7 +157,7 @@ foi muito mais plausível que os demais.
 ```{r selecao orientador}
 AICctab(or.list, weights=TRUE)
 ```
-As barras na [Fig.3](#Fig3) são os intervalos de confiança calculados por simulações bootstrap
+As barras na [Fig.3](#Fig3) são os intervalos de confiança empíricos a 95% calculados por simulações bootstrap
 dos previstos pelo modelo mais plausível, levando em conta as fontes de variação dos efeitos fixos e aleatórios.
 
 ## A qualidade da discussão afeta o impacto potencial do trabalho ?
@@ -189,7 +189,7 @@ consideradas de alto impacto potencial, em função de sua avaliação nos demai
 As linhas são os subconjuntos de fichas com indicação de excelência em discussão, resultados, ambos ou nenhum.
 O eixo x é o número de indicações nos demais quesitos avaliados com a ficha, incluindo originalidade.
 O eixo y é a proporção de teses e dissertações que tiveram indicação de impacto potencial
-alto (pontos) e os intervalos de confiança (barras) do previsto pelo modelo selecionado
+alto (pontos) e os intervalos de confiança 95% (barras) do previsto pelo modelo selecionado
 (veja em métodos, a seguir). Tamanho da amostra: `r nrow(impacto)` avaliações de `r length(unique(impacto$aluno))`
 teses e dissertações.
 
@@ -206,18 +206,21 @@ Em todos os modelos os alunos foram incluídos como efeito aleatórios, para
 considerar a variação entre avaliações a um mesmo trabalho, entre avaliadores.
 As variáveis usadas como efeitos fixos foram:
 
-* `discussao`: fator com dois níveis (indicado ou não indicado)
-* `resultado`: fator com dois níveis (indicado ou não indicado)
-* `nota.outros` : numérico (soma das indicações nos outros oito quesitos)
+* `D`: avaliação da discussão, fator com dois níveis (indicado como excelente ou não)
+* `R`: avaliação dos resultados, fator com dois níveis (indicado como excelente ou não)
+* `N` : soma das indicações nos outros oito quesitos, numérico.
 
-O modelo com os efeitos das indicações de excelência da discussão e dos resultados
-foi muito mais plausível que os demais.
+Os dois modelos com efeito aditivo da avaliação da discussão e dos resultados
+foram igualmente plausíveis. 
 
 ```{r selecao impacto}
 AICctab(imp.list, weights=TRUE)
 ```
-As barras na [Fig.4](#Fig4) são os intervalos de confiança calculados por simulações bootstrap
-dos previstos pelo modelo mais plausível, levando em conta as fontes de variação dos efeitos fixos e aleatórios.
+As barras na [Fig.4](#Fig4) são os intervalos de confiança de simulações bootstrap.
+Simulamos 1000 vezes os previstos para cada ficha para cada modelo e então
+calculamos os intervalos de confiança empíricos a 95% de cada modelo.
+As barras indicam o mínimo dos limites inferiores e o máximo dos limite superiores destes dois intervalos e,
+portanto são um limite conservador da combinação dos dois modelos.
 
 ## Agradecimentos
 
@@ -228,7 +231,7 @@ tornou possível esta avaliação. A aplicação, organização
 e transcrição dos dados de centenas de fichas por ano não seria possível sem isso.
 * A todos os professores, estudantes e funcionários do IB pelas contribuições nas
 ocasiões em que apresentamos estes resultados para debate.
-* Ao Carlos Navas, pelo convite para participar do Simpósio "Pensamento Crítico na Pós-Graduação".
+* Ao Carlos Navas e Paulo Sano, por criar o Simpósio "Pensamento Crítico na Pós-Graduação", e por nos convidar a participar.
 * A todos de nosso co-laboratório LAGE, por tantas discussões intensas e produtivas sobre
 ciência, pós-graduação, a vida, o universo e tudo mais.
 * À FAPESP pelo continuado apoio à nossa pesquisa e ao CNPq pelas nossas bolsas de produtividade.
